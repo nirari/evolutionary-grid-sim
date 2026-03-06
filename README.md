@@ -1,7 +1,7 @@
 # Evolutionary Grid Simulation 🧬
 
 A web-based evolutionary grid simulation using HTML5 Canvas and JavaScript. Visualize populations evolving across 4 islands in a grid environment.
-It showcases the power of migration between populations how it can lead to the desired state quicker. 
+It showcases the power of migration between populations and how it can quickly lead to the desired final state or solution. 
 
 ## Features
 
