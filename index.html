@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Evolutionary Grid Simulation</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <h1>Evolutionary Grid Simulation</h1>
+    <div class="controls">
+        <button id="startButton">Start</button>
+        <button id="pauseButton" disabled>Pause</button>
+        <button id="resetButton">Reset</button>
+        <p>Generation: <span id="generationCount">0</span></p>
+        <p>Population: <span id="populationCount">0</span></p>
+        <div class="slider-container">
+            <label for="migrationRateSlider">Migration Rate:</label>
+            <input type="range" id="migrationRateSlider" min="0" max="100" value="10">
+            <span id="migrationRateValue">10%</span>
+        </div>
+        <div class="slider-container">
+            <label for="migrationIntervalSlider">Migration Interval:</label>
+            <input type="range" id="migrationIntervalSlider" min="10" max="200" step="10" value="50">
+            <span id="migrationIntervalValue">50 gen</span>
+        </div>
+        <div class="slider-container">
+            <label for="speedSlider">Simulation Speed:</label>
+            <input type="range" id="speedSlider" min="1" max="20" value="5">
+            <span id="speedValue">Fast</span>
+        </div>
+        <div class="slider-container autostop-controls">
+            <label for="autostopCheckbox">Auto Stop:</label>
+            <input type="checkbox" id="autostopCheckbox">
+            <select id="stopConditionDropdown">
+                <option value="allFitness100">All Islands Avg Fitness >= 100</option>
+                <option value="generation500">Generation 500 reached</option>
+                <option value="generation1000">Generation 1000 reached</option>
+            </select>
+        </div>
+        <div class="slider-container migration-controls">
+            <label for="migrationStartGenSlider">Migration Start Gen:</label>
+            <select id="migrationStartGenDropdown">
+                <option value="100">100</option>
+                <option value="200">200</option>
+                <option value="300">300</option>
+                <option value="400">400</option>
+                <option value="500">500</option>
+            </select>
+            <label for="replacementStrategyDropdown">Replacement:</label>
+            <select id="replacementStrategyDropdown">
+                <option value="leastFitted">Least Fit</option>
+                <option value="random">Random</option>
+            </select>
+        </div>
+    </div>
+    <div id="stats-panel">
+        <div id="color-legend">
+            <h2>Fitness Spectrum:</h2>
+            <div class="legend-items spectrum-container">
+                <span>Low Fitness</span>
+                <div class="fitness-gradient"></div>
+                <span>High Fitness</span>
+            </div>
+        </div>
+        <div id="island-stats">
+            <h2>Island Statistics:</h2>
+            <div id="island-health-list">
+                <p>Initializing stats...</p>
+            </div>
+        </div>
+    </div>
+    <div id="simulation-area">
+        <div id="grid-container"></div>
+        <div id="info-panel">
+            <h2>Tree Info:</h2>
+            <p>X: <span id="info-x"></span></p>
+            <p>Y: <span id="info-y"></span></p>
+            <p>Age: <span id="info-age"></span></p>
+            <p>Height: <span id="info-height"></span></p>
+            <p>Health: <span id="info-health"></span></p>
+            <p>Water: <span id="info-water"></span></p>
+            <p>Nutrients: <span id="info-nutrients"></span></p>
+            <p>Genome: <span id="info-genome"></span></p>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>

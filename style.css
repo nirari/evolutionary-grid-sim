@@ -1,0 +1,219 @@
+body {
+    font-family: Arial, sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 20px;
+    background-color: #f0f0f0;
+}
+
+h1 {
+    color: #333;
+    margin-bottom: 15px;
+}
+
+.controls {
+    margin-bottom: 20px;
+    padding: 15px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    text-align: center;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.controls button {
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.2s ease;
+}
+
+#startButton {
+    background-color: #4CAF50;
+    color: white;
+}
+
+#startButton:hover:enabled {
+    background-color: #45a049;
+}
+
+#pauseButton {
+    background-color: #f44336;
+    color: white;
+}
+
+#pauseButton:hover:enabled {
+    background-color: #da190b;
+}
+
+#resetButton {
+    background-color: #008CBA;
+    color: white;
+}
+
+#resetButton:hover:enabled {
+    background-color: #007bb5;
+}
+
+.controls button:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+}
+
+.slider-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 5px 0;
+}
+
+.slider-container label {
+    min-width: 120px;
+    text-align: right;
+}
+
+.slider-container input[type="range"] {
+    flex-grow: 1;
+    width: 150px; /* Adjust width as needed */
+}
+
+.autostop-controls select {
+    padding: 5px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    font-size: 0.9em;
+}
+
+#simulation-area {
+    display: flex;
+    gap: 20px;
+    margin-top: 20px;
+    align-items: flex-start; /* Align top of grid and info panel */
+}
+
+#grid-container {
+    display: grid;
+    border: 1px solid #ccc; /* Restored original border */
+    background-color: #e0ffee; /* Light green for forest floor */
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.grid-cell {
+    width: 15px;
+    height: 15px;
+    border: 1px dotted #ccc; /* Make cells visible again */
+    box-sizing: border-box;
+    position: relative;
+    background-color: #e0ffee;
+}
+
+.grid-cell.water-rich { background-color: #cceeff; } /* Visually indicate water */
+.grid-cell.nutrient-rich { background-color: #ffebcc; } /* Visually indicate nutrients */
+
+.grid-cell.water-cell {
+    background-color: #aaddff; /* Light blue for water */
+    border: 1px solid #77bbff;
+}
+
+/* Flash effect for migrated cells */
+.grid-cell.flash-source {
+    animation: cell-flash-source 0.4s ease-out;
+}
+
+.grid-cell.flash-destination {
+    animation: cell-flash-destination 0.4s ease-out;
+}
+
+@keyframes cell-flash-source {
+    0% { background-color: black; transform: scale(1.3); opacity: 1; z-index: 10; }
+    100% { background-color: inherit; transform: scale(1); opacity: inherit; z-index: 1; }
+}
+
+@keyframes cell-flash-destination {
+    0% { background-color: white; transform: scale(1.3); opacity: 1; z-index: 10; }
+    100% { background-color: inherit; transform: scale(1); opacity: inherit; z-index: 1; }
+}
+
+#info-panel {
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    padding: 15px;
+    width: 250px;
+    min-height: 300px;
+    font-size: 0.9em;
+    border-left: 1px solid #eee;
+}
+
+#info-panel h2 {
+    margin-top: 0;
+    color: #555;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 10px;
+    margin-bottom: 10px;
+}
+
+#info-panel p {
+    margin: 5px 0;
+}
+
+#info-panel span {
+    font-weight: bold;
+    color: #333;
+}
+
+#stats-panel {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 20px;
+    align-items: stretch;
+}
+
+#color-legend, #island-stats {
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    padding: 15px;
+    min-width: 200px;
+}
+
+#color-legend h2, #island-stats h2 {
+    margin-top: 0;
+    font-size: 1.1em;
+    color: #555;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 8px;
+    margin-bottom: 10px;
+}
+
+.spectrum-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.fitness-gradient {
+    width: 150px;
+    height: 15px;
+    background: linear-gradient(to right, #ff4d4d, #ffff4d, #4dff4d);
+    border-radius: 4px;
+    border: 1px solid #ddd;
+}
+
+.island-stat-item {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.9em;
+    gap: 15px;
+}
+
+.island-stat-item b {
+    color: #4CAF50;
+}
