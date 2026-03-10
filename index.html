@@ -6,12 +6,46 @@
   <title>Evolutionary Grid Simulation</title>
   <link rel="stylesheet" href="style.css" />
   <style id="dynamic-cell-size"></style>
+  <style>
+    /* Force topbar onto one line always */
+    #topbar {
+      flex-wrap: nowrap !important;
+      padding: 4px 8px !important;
+      gap: 8px !important;
+      align-items: center !important;
+    }
+    #topbar-title {
+      font-size: 0.75rem !important;
+      white-space: nowrap;
+      flex-shrink: 1;
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    #topbar-hud {
+      font-size: 0.75rem !important;
+      gap: 8px !important;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    #topbar-btns {
+      margin-left: auto;
+      flex-shrink: 0;
+      gap: 4px !important;
+      display: flex;
+    }
+    #topbar-btns button {
+      font-size: 0.72rem !important;
+      padding: 3px 7px !important;
+      white-space: nowrap;
+    }
+  </style>
 </head>
 <body>
 
   <!-- TOP BAR -->
   <div id="topbar">
-    <div id="topbar-title">Evolutionary Grid Simulation</div>
+    <div id="topbar-title">Evo Grid Sim</div>
     <div id="topbar-hud">
       <span>Gen: <strong id="generationCount">0</strong></span>
       <span>Pop: <strong id="populationCount">0</strong></span>
@@ -20,7 +54,7 @@
       <button id="startButton">&#9654; Start</button>
       <button id="pauseButton" disabled>&#9646;&#9646; Pause</button>
       <button id="resetButton">&#8635; Reset</button>
-      <button id="toggleControls">&#9881; Controls &#9660;</button>
+      <button id="toggleControls">&#9881; &#9660;</button>
     </div>
   </div>
 
@@ -119,32 +153,26 @@
     var _controlsBar   = document.getElementById('controls-bar');
     var _topbar        = document.getElementById('topbar');
     var _dynStyle      = document.getElementById('dynamic-cell-size');
-    var GRID_COLS      = 60; // must match GRID_SIZE in script.js
+    var GRID_COLS      = 60;
 
     _toggleBtn.addEventListener('click', function() {
       _controlsOpen = !_controlsOpen;
       _controlsBar.classList.toggle('collapsed', !_controlsOpen);
       _toggleBtn.innerHTML = _controlsOpen
-        ? '&#9881; Controls &#9650;'
-        : '&#9881; Controls &#9660;';
+        ? '&#9881; &#9650;'
+        : '&#9881; &#9660;';
       _scaleGrid();
     });
 
     function _scaleGrid() {
       requestAnimationFrame(function() {
-        // Available space
         var usedH  = _topbar.offsetHeight
                    + (_controlsOpen ? _controlsBar.offsetHeight : 0)
                    + 20;
         var availW = window.innerWidth  - 20;
         var availH = window.innerHeight - usedH;
-
-        // Cell size = fit the square grid into available space
         var cellPx = Math.floor(Math.min(availW, availH) / GRID_COLS);
-        cellPx = Math.max(1, Math.min(cellPx, 15)); // clamp 1-15px
-
-        // Inject overriding CSS — this gives the grid real layout dimensions
-        // so flexbox centering in #grid-wrap works perfectly with no transforms.
+        cellPx = Math.max(1, Math.min(cellPx, 15));
         _dynStyle.textContent =
           '.grid-cell { width: ' + cellPx + 'px !important; height: ' + cellPx + 'px !important; }' +
           '#grid-container { grid-template-columns: repeat(' + GRID_COLS + ', ' + cellPx + 'px) !important;' +
@@ -154,7 +182,6 @@
 
     window.addEventListener('resize', _scaleGrid);
 
-    // Run once grid cells exist
     var _gridPoll = setInterval(function() {
       var gc = document.getElementById('grid-container');
       if (gc && gc.children.length > 0) {
@@ -162,11 +189,8 @@
         _scaleGrid();
       }
     }, 100);
-
-    // Also run immediately in case grid is already built
     _scaleGrid();
 
-    // Floating tooltip
     var _tooltip = document.getElementById('tooltip');
     document.getElementById('grid-container').addEventListener('mouseover', function(e) {
       var cell = e.target.closest ? e.target.closest('.grid-cell') : null;
