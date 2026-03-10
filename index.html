@@ -95,21 +95,25 @@
     <div id="grid-wrap">
       <div id="grid-container"></div>
     </div>
-    <div id="info-panel">
-      <h2>Tree Info:</h2>
-      <p>X: <span id="info-x"></span></p>
-      <p>Y: <span id="info-y"></span></p>
-      <p>Age: <span id="info-age"></span></p>
-      <p>Height: <span id="info-height"></span></p>
-      <p>Health: <span id="info-health"></span></p>
-      <p>Water: <span id="info-water"></span></p>
-      <p>Nutrients: <span id="info-nutrients"></span></p>
-      <p>Genome: <span id="info-genome"></span></p>
-    </div>
   </div>
+
+  <!-- HOVER TOOLTIP (replaces info panel) -->
+  <div id="tooltip"></div>
+
+  <!-- Hidden spans kept for script.js compatibility -->
+  <span id="info-x" style="display:none"></span>
+  <span id="info-y" style="display:none"></span>
+  <span id="info-age" style="display:none"></span>
+  <span id="info-height" style="display:none"></span>
+  <span id="info-health" style="display:none"></span>
+  <span id="info-water" style="display:none"></span>
+  <span id="info-nutrients" style="display:none"></span>
+  <span id="info-genome" style="display:none"></span>
+  <div id="info-panel" style="display:none"></div>
 
   <script src="script.js"></script>
   <script>
+    // Collapsible controls toggle
     const toggleBtn = document.getElementById('toggleControls');
     const controlsBar = document.getElementById('controls-bar');
     let open = false;
@@ -117,6 +121,63 @@
       open = !open;
       controlsBar.classList.toggle('collapsed', !open);
       toggleBtn.innerHTML = open ? '&#9881; Controls &#9650;' : '&#9881; Controls &#9660;';
+      scaleGrid();
+    });
+
+    // Scale grid to fit available area
+    const gridWrap = document.getElementById('grid-wrap');
+    const gridContainer = document.getElementById('grid-container');
+    function scaleGrid() {
+      // Use rAF to let layout settle after any controls toggle
+      requestAnimationFrame(() => {
+        const availW = gridWrap.clientWidth;
+        const availH = gridWrap.clientHeight;
+        const gridW = gridContainer.scrollWidth;
+        const gridH = gridContainer.scrollHeight;
+        if (gridW === 0 || gridH === 0) return;
+        const scale = Math.min(availW / gridW, availH / gridH, 1);
+        gridContainer.style.transformOrigin = 'top left';
+        gridContainer.style.transform = `scale(${scale})`;
+        // Shrink wrapper to match scaled size so centering works
+        gridContainer.parentElement.style.width  = (gridW * scale) + 'px';
+        gridContainer.parentElement.style.height = (gridH * scale) + 'px';
+      });
+    }
+
+    // Re-scale on resize and after grid is created
+    window.addEventListener('resize', scaleGrid);
+    // Poll until grid cells exist then scale
+    const waitForGrid = setInterval(() => {
+      if (gridContainer.children.length > 0) {
+        clearInterval(waitForGrid);
+        scaleGrid();
+      }
+    }, 100);
+
+    // Floating tooltip: intercept the existing mouseenter/mouseleave on cells
+    const tooltip = document.getElementById('tooltip');
+    gridContainer.addEventListener('mouseover', e => {
+      const cell = e.target.closest('.grid-cell');
+      if (!cell) return;
+      const x = cell.dataset.x, y = cell.dataset.y;
+      const ix = document.getElementById('info-x').textContent;
+      const iy = document.getElementById('info-y').textContent;
+      // Only show if script populated the hidden spans (i.e. it's a tree)
+      if (ix === '' && iy === '') return;
+      tooltip.innerHTML =
+        `<b>X:</b> ${document.getElementById('info-x').textContent} &nbsp; <b>Y:</b> ${document.getElementById('info-y').textContent}<br>` +
+        `<b>Age:</b> ${document.getElementById('info-age').textContent} &nbsp; <b>Height:</b> ${document.getElementById('info-height').textContent}<br>` +
+        `<b>Health:</b> ${document.getElementById('info-health').textContent}<br>` +
+        `<b>Water:</b> ${document.getElementById('info-water').textContent} &nbsp; <b>Nutrients:</b> ${document.getElementById('info-nutrients').textContent}<br>` +
+        `<b>Genome:</b> ${document.getElementById('info-genome').textContent}`;
+      tooltip.style.display = 'block';
+    });
+    gridContainer.addEventListener('mousemove', e => {
+      tooltip.style.left = (e.clientX + 14) + 'px';
+      tooltip.style.top  = (e.clientY - 10) + 'px';
+    });
+    gridContainer.addEventListener('mouseleave', () => {
+      tooltip.style.display = 'none';
     });
   </script>
 </body>

@@ -141,24 +141,21 @@ button:disabled { background-color: #ccc; cursor: not-allowed; }
 #simulation-area {
   flex: 1 1 auto;
   display: flex;
-  gap: 16px;
-  padding: 12px;
+  align-items: center;
+  justify-content: center;
+  padding: 8px;
   overflow: hidden;
-  align-items: flex-start;
   min-height: 0;
 }
 
-/* Grid wrapper: scrollable, fills available space */
+/* Grid wrapper: sized by JS after scaling */
 #grid-wrap {
-  flex: 1 1 auto;
-  overflow: auto;
-  min-width: 0;
-  min-height: 0;
+  width: 100%;
   height: 100%;
-  /* Use CSS zoom/scale to shrink the grid to fit if needed */
   display: flex;
-  align-items: flex-start;
-  justify-content: flex-start;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
 }
 
 #grid-container {
@@ -166,8 +163,8 @@ button:disabled { background-color: #ccc; cursor: not-allowed; }
   border: 1px solid #ccc;
   background-color: #e0ffee;
   box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-  /* Allow browser to shrink-to-fit on narrow screens */
-  max-width: 100%;
+  /* transform-origin set by JS */
+  transform-origin: top left;
 }
 
 .grid-cell {
@@ -200,23 +197,19 @@ button:disabled { background-color: #ccc; cursor: not-allowed; }
   100% { background-color: inherit; transform: scale(1); opacity: inherit; z-index: 1; }
 }
 
-/* Info panel */
-#info-panel {
-  background-color: #fff;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-  padding: 15px;
-  width: 220px;
-  flex-shrink: 0;
-  font-size: 13px;
+/* ── FLOATING TOOLTIP ── */
+#tooltip {
+  position: fixed;
+  background: rgba(255,255,255,0.96);
+  color: #222;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  padding: 8px 12px;
+  font-size: 12px;
+  line-height: 1.8;
+  pointer-events: none;
+  display: none;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  z-index: 1000;
+  max-width: 240px;
 }
-#info-panel h2 {
-  margin-top: 0;
-  color: #555;
-  border-bottom: 1px solid #eee;
-  padding-bottom: 8px;
-  margin-bottom: 10px;
-  font-size: 1em;
-}
-#info-panel p { margin: 4px 0; }
-#info-panel span { font-weight: bold; color: #333; }
