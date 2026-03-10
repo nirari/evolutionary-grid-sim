@@ -113,14 +113,10 @@
 
   <script src="script.js"></script>
   <script>
-    // NOTE: script.js already declares `const gridContainer` so we reference
-    // DOM nodes by getElementById here to avoid redeclaration errors.
-
-    // ── Collapsible controls toggle ──
     var _controlsOpen = false;
-    var _toggleBtn    = document.getElementById('toggleControls');
-    var _controlsBar  = document.getElementById('controls-bar');
-    var _topbar       = document.getElementById('topbar');
+    var _toggleBtn   = document.getElementById('toggleControls');
+    var _controlsBar = document.getElementById('controls-bar');
+    var _topbar      = document.getElementById('topbar');
 
     _toggleBtn.addEventListener('click', function() {
       _controlsOpen = !_controlsOpen;
@@ -131,32 +127,42 @@
       _scaleGrid();
     });
 
-    // ── Grid scaling ──
     function _scaleGrid() {
       requestAnimationFrame(function() {
         var gc = document.getElementById('grid-container');
-        // Reset first so we read the true natural dimensions
+
+        // 1. Reset transform so offsetWidth/Height give the natural size
         gc.style.transform = 'none';
+        gc.style.marginLeft = '0';
 
         var naturalW = gc.offsetWidth;
         var naturalH = gc.offsetHeight;
         if (naturalW === 0 || naturalH === 0) return;
 
+        // 2. Available space
         var usedH = _topbar.offsetHeight
                   + (_controlsOpen ? _controlsBar.offsetHeight : 0)
                   + 20;
         var availW = window.innerWidth  - 20;
         var availH = window.innerHeight - usedH;
 
+        // 3. Uniform scale
         var scale = Math.min(availW / naturalW, availH / naturalH, 1);
+
+        // 4. After scaling from top-left, the grid visually occupies
+        //    naturalW*scale wide but still takes naturalW in layout.
+        //    Shift it right by half the difference to center it.
+        var scaledW = naturalW * scale;
+        var offsetX = (availW - scaledW) / 2;
+
         gc.style.transformOrigin = 'top left';
         gc.style.transform = 'scale(' + scale + ')';
+        gc.style.marginLeft = offsetX + 'px';
       });
     }
 
     window.addEventListener('resize', _scaleGrid);
 
-    // Wait for script.js to build the grid cells, then scale
     var _gridPoll = setInterval(function() {
       var gc = document.getElementById('grid-container');
       if (gc && gc.children.length > 0) {
@@ -165,19 +171,15 @@
       }
     }, 100);
 
-    // ── Floating tooltip ──
-    // script.js writes tree info into the hidden #info-* spans via showTreeInfo().
-    // We read those and display them in a floating tooltip instead.
+    // Floating tooltip
     var _tooltip = document.getElementById('tooltip');
-
     document.getElementById('grid-container').addEventListener('mouseover', function(e) {
       var cell = e.target.closest ? e.target.closest('.grid-cell') : null;
       if (!cell) return;
       var ix = document.getElementById('info-x').textContent;
-      var iy = document.getElementById('info-y').textContent;
       if (ix === '') return;
       _tooltip.innerHTML =
-        '<b>X:</b> ' + ix + ' &nbsp; <b>Y:</b> ' + iy + '<br>' +
+        '<b>X:</b> ' + ix + ' &nbsp; <b>Y:</b> ' + document.getElementById('info-y').textContent + '<br>' +
         '<b>Age:</b> ' + document.getElementById('info-age').textContent +
         ' &nbsp; <b>Height:</b> ' + document.getElementById('info-height').textContent + '<br>' +
         '<b>Health:</b> ' + document.getElementById('info-health').textContent + '<br>' +
