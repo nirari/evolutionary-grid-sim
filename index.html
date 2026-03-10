@@ -97,10 +97,10 @@
     </div>
   </div>
 
-  <!-- HOVER TOOLTIP (replaces info panel) -->
+  <!-- HOVER TOOLTIP -->
   <div id="tooltip"></div>
 
-  <!-- Hidden spans kept for script.js compatibility -->
+  <!-- Hidden spans for script.js compatibility -->
   <span id="info-x" style="display:none"></span>
   <span id="info-y" style="display:none"></span>
   <span id="info-age" style="display:none"></span>
@@ -114,7 +114,7 @@
   <script src="script.js"></script>
   <script>
     // Collapsible controls toggle
-    const toggleBtn = document.getElementById('toggleControls');
+    const toggleBtn   = document.getElementById('toggleControls');
     const controlsBar = document.getElementById('controls-bar');
     let open = false;
     toggleBtn.addEventListener('click', () => {
@@ -124,29 +124,38 @@
       scaleGrid();
     });
 
-    // Scale grid to fit available area
-    const gridWrap = document.getElementById('grid-wrap');
+    // ── Scale grid to fill available screen ──────────────────────────────
     const gridContainer = document.getElementById('grid-container');
+    const topbar        = document.getElementById('topbar');
+
     function scaleGrid() {
-      // Use rAF to let layout settle after any controls toggle
       requestAnimationFrame(() => {
-        const availW = gridWrap.clientWidth;
-        const availH = gridWrap.clientHeight;
-        const gridW = gridContainer.scrollWidth;
-        const gridH = gridContainer.scrollHeight;
-        if (gridW === 0 || gridH === 0) return;
-        const scale = Math.min(availW / gridW, availH / gridH, 1);
+        // 1. Reset transform so we measure the NATURAL (unscaled) size
+        gridContainer.style.transform = 'none';
+
+        const naturalW = gridContainer.offsetWidth;
+        const naturalH = gridContainer.offsetHeight;
+        if (naturalW === 0 || naturalH === 0) return;
+
+        // 2. Available space = viewport minus topbar minus controls (if open)
+        const usedH = topbar.offsetHeight
+                    + (open ? controlsBar.offsetHeight : 0)
+                    + 16; // small padding
+        const availW = window.innerWidth  - 16;
+        const availH = window.innerHeight - usedH;
+
+        // 3. Compute uniform scale (never upscale beyond 1)
+        const scale = Math.min(availW / naturalW, availH / naturalH, 1);
+
+        // 4. Apply
         gridContainer.style.transformOrigin = 'top left';
-        gridContainer.style.transform = `scale(${scale})`;
-        // Shrink wrapper to match scaled size so centering works
-        gridContainer.parentElement.style.width  = (gridW * scale) + 'px';
-        gridContainer.parentElement.style.height = (gridH * scale) + 'px';
+        gridContainer.style.transform       = `scale(${scale})`;
       });
     }
 
-    // Re-scale on resize and after grid is created
     window.addEventListener('resize', scaleGrid);
-    // Poll until grid cells exist then scale
+
+    // Wait for script.js to build the grid, then scale
     const waitForGrid = setInterval(() => {
       if (gridContainer.children.length > 0) {
         clearInterval(waitForGrid);
@@ -154,21 +163,21 @@
       }
     }, 100);
 
-    // Floating tooltip: intercept the existing mouseenter/mouseleave on cells
+    // ── Floating tooltip ────────────────────────────────────────────────
     const tooltip = document.getElementById('tooltip');
     gridContainer.addEventListener('mouseover', e => {
       const cell = e.target.closest('.grid-cell');
       if (!cell) return;
-      const x = cell.dataset.x, y = cell.dataset.y;
       const ix = document.getElementById('info-x').textContent;
       const iy = document.getElementById('info-y').textContent;
-      // Only show if script populated the hidden spans (i.e. it's a tree)
       if (ix === '' && iy === '') return;
       tooltip.innerHTML =
-        `<b>X:</b> ${document.getElementById('info-x').textContent} &nbsp; <b>Y:</b> ${document.getElementById('info-y').textContent}<br>` +
-        `<b>Age:</b> ${document.getElementById('info-age').textContent} &nbsp; <b>Height:</b> ${document.getElementById('info-height').textContent}<br>` +
+        `<b>X:</b> ${ix} &nbsp; <b>Y:</b> ${iy}<br>` +
+        `<b>Age:</b> ${document.getElementById('info-age').textContent} &nbsp;` +
+        `<b>Height:</b> ${document.getElementById('info-height').textContent}<br>` +
         `<b>Health:</b> ${document.getElementById('info-health').textContent}<br>` +
-        `<b>Water:</b> ${document.getElementById('info-water').textContent} &nbsp; <b>Nutrients:</b> ${document.getElementById('info-nutrients').textContent}<br>` +
+        `<b>Water:</b> ${document.getElementById('info-water').textContent} &nbsp;` +
+        `<b>Nutrients:</b> ${document.getElementById('info-nutrients').textContent}<br>` +
         `<b>Genome:</b> ${document.getElementById('info-genome').textContent}`;
       tooltip.style.display = 'block';
     });
