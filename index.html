@@ -113,80 +113,85 @@
 
   <script src="script.js"></script>
   <script>
-    // Collapsible controls toggle
-    const toggleBtn   = document.getElementById('toggleControls');
-    const controlsBar = document.getElementById('controls-bar');
-    let open = false;
-    toggleBtn.addEventListener('click', () => {
-      open = !open;
-      controlsBar.classList.toggle('collapsed', !open);
-      toggleBtn.innerHTML = open ? '&#9881; Controls &#9650;' : '&#9881; Controls &#9660;';
-      scaleGrid();
+    // NOTE: script.js already declares `const gridContainer` so we reference
+    // DOM nodes by getElementById here to avoid redeclaration errors.
+
+    // ── Collapsible controls toggle ──
+    var _controlsOpen = false;
+    var _toggleBtn    = document.getElementById('toggleControls');
+    var _controlsBar  = document.getElementById('controls-bar');
+    var _topbar       = document.getElementById('topbar');
+
+    _toggleBtn.addEventListener('click', function() {
+      _controlsOpen = !_controlsOpen;
+      _controlsBar.classList.toggle('collapsed', !_controlsOpen);
+      _toggleBtn.innerHTML = _controlsOpen
+        ? '&#9881; Controls &#9650;'
+        : '&#9881; Controls &#9660;';
+      _scaleGrid();
     });
 
-    // ── Scale grid to fill available screen ──────────────────────────────
-    const gridContainer = document.getElementById('grid-container');
-    const topbar        = document.getElementById('topbar');
+    // ── Grid scaling ──
+    function _scaleGrid() {
+      requestAnimationFrame(function() {
+        var gc = document.getElementById('grid-container');
+        // Reset first so we read the true natural dimensions
+        gc.style.transform = 'none';
 
-    function scaleGrid() {
-      requestAnimationFrame(() => {
-        // 1. Reset transform so we measure the NATURAL (unscaled) size
-        gridContainer.style.transform = 'none';
-
-        const naturalW = gridContainer.offsetWidth;
-        const naturalH = gridContainer.offsetHeight;
+        var naturalW = gc.offsetWidth;
+        var naturalH = gc.offsetHeight;
         if (naturalW === 0 || naturalH === 0) return;
 
-        // 2. Available space = viewport minus topbar minus controls (if open)
-        const usedH = topbar.offsetHeight
-                    + (open ? controlsBar.offsetHeight : 0)
-                    + 16; // small padding
-        const availW = window.innerWidth  - 16;
-        const availH = window.innerHeight - usedH;
+        var usedH = _topbar.offsetHeight
+                  + (_controlsOpen ? _controlsBar.offsetHeight : 0)
+                  + 20;
+        var availW = window.innerWidth  - 20;
+        var availH = window.innerHeight - usedH;
 
-        // 3. Compute uniform scale (never upscale beyond 1)
-        const scale = Math.min(availW / naturalW, availH / naturalH, 1);
-
-        // 4. Apply
-        gridContainer.style.transformOrigin = 'top left';
-        gridContainer.style.transform       = `scale(${scale})`;
+        var scale = Math.min(availW / naturalW, availH / naturalH, 1);
+        gc.style.transformOrigin = 'top left';
+        gc.style.transform = 'scale(' + scale + ')';
       });
     }
 
-    window.addEventListener('resize', scaleGrid);
+    window.addEventListener('resize', _scaleGrid);
 
-    // Wait for script.js to build the grid, then scale
-    const waitForGrid = setInterval(() => {
-      if (gridContainer.children.length > 0) {
-        clearInterval(waitForGrid);
-        scaleGrid();
+    // Wait for script.js to build the grid cells, then scale
+    var _gridPoll = setInterval(function() {
+      var gc = document.getElementById('grid-container');
+      if (gc && gc.children.length > 0) {
+        clearInterval(_gridPoll);
+        _scaleGrid();
       }
     }, 100);
 
-    // ── Floating tooltip ────────────────────────────────────────────────
-    const tooltip = document.getElementById('tooltip');
-    gridContainer.addEventListener('mouseover', e => {
-      const cell = e.target.closest('.grid-cell');
+    // ── Floating tooltip ──
+    // script.js writes tree info into the hidden #info-* spans via showTreeInfo().
+    // We read those and display them in a floating tooltip instead.
+    var _tooltip = document.getElementById('tooltip');
+
+    document.getElementById('grid-container').addEventListener('mouseover', function(e) {
+      var cell = e.target.closest ? e.target.closest('.grid-cell') : null;
       if (!cell) return;
-      const ix = document.getElementById('info-x').textContent;
-      const iy = document.getElementById('info-y').textContent;
-      if (ix === '' && iy === '') return;
-      tooltip.innerHTML =
-        `<b>X:</b> ${ix} &nbsp; <b>Y:</b> ${iy}<br>` +
-        `<b>Age:</b> ${document.getElementById('info-age').textContent} &nbsp;` +
-        `<b>Height:</b> ${document.getElementById('info-height').textContent}<br>` +
-        `<b>Health:</b> ${document.getElementById('info-health').textContent}<br>` +
-        `<b>Water:</b> ${document.getElementById('info-water').textContent} &nbsp;` +
-        `<b>Nutrients:</b> ${document.getElementById('info-nutrients').textContent}<br>` +
-        `<b>Genome:</b> ${document.getElementById('info-genome').textContent}`;
-      tooltip.style.display = 'block';
+      var ix = document.getElementById('info-x').textContent;
+      var iy = document.getElementById('info-y').textContent;
+      if (ix === '') return;
+      _tooltip.innerHTML =
+        '<b>X:</b> ' + ix + ' &nbsp; <b>Y:</b> ' + iy + '<br>' +
+        '<b>Age:</b> ' + document.getElementById('info-age').textContent +
+        ' &nbsp; <b>Height:</b> ' + document.getElementById('info-height').textContent + '<br>' +
+        '<b>Health:</b> ' + document.getElementById('info-health').textContent + '<br>' +
+        '<b>Water:</b> ' + document.getElementById('info-water').textContent +
+        ' &nbsp; <b>Nutrients:</b> ' + document.getElementById('info-nutrients').textContent + '<br>' +
+        '<b>Genome:</b> ' + document.getElementById('info-genome').textContent;
+      _tooltip.style.display = 'block';
     });
-    gridContainer.addEventListener('mousemove', e => {
-      tooltip.style.left = (e.clientX + 14) + 'px';
-      tooltip.style.top  = (e.clientY - 10) + 'px';
+    document.getElementById('grid-container').addEventListener('mousemove', function(e) {
+      _tooltip.style.left = (e.clientX + 14) + 'px';
+      _tooltip.style.top  = (e.clientY - 10) + 'px';
     });
-    gridContainer.addEventListener('mouseleave', () => {
-      tooltip.style.display = 'none';
+    document.getElementById('grid-container').addEventListener('mouseleave', function() {
+      _tooltip.style.display = 'none';
     });
   </script>
 </body>
