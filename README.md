@@ -47,6 +47,10 @@ Or use any other local development server of your choice.
 3. Open `http://localhost:8000` in your web browser
 4. Enjoy watching the evolution!
 
+## Screenshot
+
+<img width="834" height="859" alt="image" src="https://github.com/user-attachments/assets/31e8eceb-3e2e-475e-bc69-68f53f2576d8" />
+
 ## Technology Stack
 
 - **HTML5** - Canvas API for rendering
