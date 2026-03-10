@@ -148,7 +148,6 @@ button:disabled { background-color: #ccc; cursor: not-allowed; }
   min-height: 0;
 }
 
-/* Grid wrapper: sized by JS after scaling */
 #grid-wrap {
   width: 100%;
   height: 100%;
@@ -163,8 +162,8 @@ button:disabled { background-color: #ccc; cursor: not-allowed; }
   border: 1px solid #ccc;
   background-color: #e0ffee;
   box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-  /* transform-origin set by JS */
-  transform-origin: top left;
+  /* Scale from the top-center so the grid stays horizontally centered */
+  transform-origin: top center;
 }
 
 .grid-cell {
