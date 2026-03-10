@@ -13,42 +13,51 @@ html, body {
 #topbar {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 7px 14px;
+  gap: 6px;
+  padding: 5px 10px;
   background: #fff;
   border-bottom: 1px solid #ddd;
   box-shadow: 0 1px 3px rgba(0,0,0,0.08);
   flex-shrink: 0;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;   /* single line always */
+  white-space: nowrap;
+  overflow: hidden;
 }
 
 #topbar-title {
-  font-size: 1rem;
+  font-size: 0.78rem;
   font-weight: bold;
   color: #333;
+  flex-shrink: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 #topbar-hud {
   display: flex;
-  gap: 14px;
-  font-size: 13px;
+  gap: 8px;
+  font-size: 11px;
   color: #555;
+  flex-shrink: 0;
 }
 #topbar-hud strong { color: #111; }
 
 #topbar-btns {
   display: flex;
-  gap: 6px;
+  gap: 4px;
   margin-left: auto;
+  flex-shrink: 0;
 }
 
 button {
-  padding: 7px 13px;
+  padding: 4px 8px;
   border: none;
   border-radius: 5px;
   cursor: pointer;
-  font-size: 13px;
+  font-size: 11px;
   transition: background-color 0.2s;
+  white-space: nowrap;
 }
 button:disabled { background-color: #ccc; cursor: not-allowed; }
 
@@ -162,8 +171,6 @@ button:disabled { background-color: #ccc; cursor: not-allowed; }
   border: 1px solid #ccc;
   background-color: #e0ffee;
   box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-  /* Scale from the top-center so the grid stays horizontally centered */
-  transform-origin: top center;
 }
 
 .grid-cell {
