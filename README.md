@@ -49,7 +49,7 @@ Or use any other local development server of your choice.
 
 ## User Interface
 
-See it for yourself: https://nirari.github.io/evolutionary-grid-sim/
+Try it here for yourself: https://nirari.github.io/evolutionary-grid-sim/
 
 <img width="1054" height="854" alt="image" src="https://github.com/user-attachments/assets/f262d4e6-d6ed-4350-8ed0-f3d121c87859" />
 
