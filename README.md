@@ -47,9 +47,11 @@ Or use any other local development server of your choice.
 3. Open `http://localhost:8000` in your web browser
 4. Enjoy watching the evolution!
 
-## Screenshot
+## User Interface
 
-<img width="834" height="859" alt="image" src="https://github.com/user-attachments/assets/31e8eceb-3e2e-475e-bc69-68f53f2576d8" />
+See it for yourself: https://nirari.github.io/evolutionary-grid-sim/
+
+<img width="1054" height="854" alt="image" src="https://github.com/user-attachments/assets/f262d4e6-d6ed-4350-8ed0-f3d121c87859" />
 
 ## Technology Stack
 
